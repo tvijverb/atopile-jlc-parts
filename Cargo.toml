@@ -1,0 +1,18 @@
+[package]
+name = "atopile-jlc-parts"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+axum = "0.7.4"
+serde = { version = "1.0.196", features = ["derive"] }
+serde_json = "1.0.113"
+tokio = { version = "1.36.0", features = ["full"] }
+tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
+utoipa = "4.2.0"
+utoipa-swagger-ui = { version = "6.0.0", features = ["axum"] }
+utoipauto = "0.1.9"
+polars = { version = "0.37.0", features = ["parquet", "lazy", "object", "streaming", "sql"] }
+uuid = { version = "1.7.0", features = ["v4"] }

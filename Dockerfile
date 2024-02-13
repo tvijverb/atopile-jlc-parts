@@ -1,0 +1,9 @@
+ARG VARIANT="bookworm"
+ARG RUST_LOG="atopile-jlc-parts=info"
+
+FROM rust:slim-${VARIANT}
+
+RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+    && apt-get -y install --no-install-recommends libpq-dev pkg-config git mold p7zip-full
+RUN cargo install cargo-watch
+RUN rustup component add rustfmt
