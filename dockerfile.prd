@@ -1,0 +1,40 @@
+ARG VARIANT="bookworm"
+
+FROM rust:slim-${VARIANT} as build
+
+
+WORKDIR /jlcparts
+
+RUN  apt-get update && apt-get upgrade -y \
+    && apt-get install -y mold wget p7zip-full g++ \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+
+RUN wget https://yaqwsx.github.io/jlcparts/data/cache.zip https://yaqwsx.github.io/jlcparts/data/cache.z01 \
+    https://yaqwsx.github.io/jlcparts/data/cache.z02 https://yaqwsx.github.io/jlcparts/data/cache.z03 \
+    https://yaqwsx.github.io/jlcparts/data/cache.z04 https://yaqwsx.github.io/jlcparts/data/cache.z05 \
+    https://yaqwsx.github.io/jlcparts/data/cache.z06 https://yaqwsx.github.io/jlcparts/data/cache.z07 \
+    https://yaqwsx.github.io/jlcparts/data/cache.z08
+RUN 7z x cache.zip
+
+RUN cargo install --git https://github.com/tvijverb/jlc-duckdb-to-parquet
+
+RUN jlc-duckdb-to-parquet
+
+# COPY ../Cargo.toml ./Cargo.toml
+# # Build empty app with downloaded dependencies to produce a stable image layer for next build
+# RUN cargo build --release
+
+WORKDIR /app
+
+RUN cp /jlcparts/components.parquet /app/components.parquet
+
+COPY . .
+COPY Cargo.toml ./Cargo.toml
+RUN cargo build --release
+
+FROM debian:${VARIANT}-slim
+COPY --from=build /app/target/release/atopile-jlc-parts .
+COPY --from=build /app/components.parquet .
+EXPOSE 3080
+CMD ["./atopile-jlc-parts"]
