@@ -8,6 +8,8 @@ Rust, Axum, Pola.rs, Docker
 
 ## Server start
 Clone this repository to your local computer and run:
+Building the docker image will take +/- 10 minutes depending on your hardware
+
 ```bash
 docker run -p 3001:3000 -d $(docker build -q -f dockerfile.prd .)
 ```
