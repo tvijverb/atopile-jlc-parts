@@ -19,6 +19,7 @@ pub fn find_inductor(request: JLCPartRequest) -> Option<(DataFrame, JLCValue)> {
         "nH" => 1e3,
         "nanohenry" => 1e3,
         "μH" => 1e6,
+        "uH" => 1e6,
         "microhenry" => 1e6,
         "mH" => 1e9,
         "millihenry" => 1e9,

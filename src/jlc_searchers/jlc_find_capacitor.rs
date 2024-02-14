@@ -18,6 +18,7 @@ pub fn find_capacitor(request: JLCPartRequest) -> Option<(DataFrame, JLCValue)> 
         "nF" => 1e3,
         "nanofarad" => 1e3,
         "μF" => 1e6,
+        "uF" => 1e6,
         "microfarad" => 1e6,
         "mF" => 1e9,
         "millifarad" => 1e9,
