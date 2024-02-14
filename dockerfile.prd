@@ -14,7 +14,7 @@ RUN wget https://yaqwsx.github.io/jlcparts/data/cache.zip https://yaqwsx.github.
     https://yaqwsx.github.io/jlcparts/data/cache.z02 https://yaqwsx.github.io/jlcparts/data/cache.z03 \
     https://yaqwsx.github.io/jlcparts/data/cache.z04 https://yaqwsx.github.io/jlcparts/data/cache.z05 \
     https://yaqwsx.github.io/jlcparts/data/cache.z06 https://yaqwsx.github.io/jlcparts/data/cache.z07 \
-    https://yaqwsx.github.io/jlcparts/data/cache.z08
+    https://yaqwsx.github.io/jlcparts/data/cache.z08 https://yaqwsx.github.io/jlcparts/data/cache.z09
 RUN 7z x cache.zip
 
 RUN cargo install --git https://github.com/tvijverb/jlc-duckdb-to-parquet
