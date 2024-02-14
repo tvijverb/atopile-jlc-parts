@@ -19,7 +19,7 @@ RUN 7z x cache.zip
 
 RUN cargo install --git https://github.com/tvijverb/jlc-duckdb-to-parquet
 
-RUN jlc-duckdb-to-parquet
+RUN /usr/local/cargo/bin/jlc-duckdb-to-parquet
 
 # COPY ../Cargo.toml ./Cargo.toml
 # # Build empty app with downloaded dependencies to produce a stable image layer for next build
