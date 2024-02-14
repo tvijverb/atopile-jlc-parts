@@ -14,10 +14,16 @@ Clone this repository to your local computer and run:
 docker run -p 3001:3000 -d $(docker build -q -f dockerfile.prd .)
 ```
 
-or if you prefer docker compose
+Or if you prefer docker compose
 ```bash
 docker compose up
 ```
+
+You'll need the JLC parts parquet dataframe in order to serve requests, you can get it from this repository:
+```bash
+https://github.com/tvijverb/jlc-duckdb-to-parquet
+```
+
 
 ## Endpoints
 swagger page
