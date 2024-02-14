@@ -6,9 +6,9 @@ Alternative backend to the official Atopile component search-engine.
 ## Tech stack
 Rust, Axum, Pola.rs, Docker
 
-## Server start
+## Install
+Building the docker image will take +/- 10 minutes depending on your hardware.
 Clone this repository to your local computer and run:
-Building the docker image will take +/- 10 minutes depending on your hardware
 
 ```bash
 docker run -p 3001:3000 -d $(docker build -q -f dockerfile.prd .)
@@ -20,8 +20,15 @@ docker compose up
 ```
 
 ## Endpoints
-0.0.0.0/docs => swagger page
-0.0.0.0/jlc => post request request for parts
+swagger page
+```
+0.0.0.0/docs
+```
+
+post request request for parts
+```
+0.0.0.0/jlc
+```
 
 example request body
 ```
