@@ -31,6 +31,6 @@ jobs:
         with:
           context: .
           file: ./dockerfile.prd  # Path to your Dockerfile
-          platforms: linux/amd64,linux/arm64  # Add any other platforms you want to support
+          platforms: linux/arm64 #, linux/amd64  # Add any other platforms you want to support
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/jlc-parts:latest
