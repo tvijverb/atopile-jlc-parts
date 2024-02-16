@@ -11,7 +11,7 @@ RUN  apt-get update && apt-get upgrade -y \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN curl -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash
-RUN cargo binstall jlcpcb-to-parquet -y
+RUN cargo binstall jlcpcb-to-parquet -y || echo "cargo binstall failed, fallback on cargo install"; cargo install --git https://github.com/tvijverb/jlc-duckdb-to-parquet; exit 0
 
 
 RUN wget https://yaqwsx.github.io/jlcparts/data/cache.zip https://yaqwsx.github.io/jlcparts/data/cache.z01 \
