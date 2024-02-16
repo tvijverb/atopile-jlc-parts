@@ -140,7 +140,7 @@ checksum = "9ae037714f313c1353189ead58ef9eec30a8e8dc101b2622d461418fd59e28a9"
 
 [[package]]
 name = "atopile-jlc-parts"
-version = "0.1.0"
+version = "0.1.2"
 dependencies = [
  "axum",
  "polars",
