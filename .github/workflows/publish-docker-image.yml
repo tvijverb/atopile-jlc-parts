@@ -22,8 +22,8 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/jlc-parts:latest-amd64 .
-          docker push ghcr.io/${{ github.repository_owner }}/jlc-parts:latest-amd64
+          docker build --no-cache -t ghcr.io/${{ github.repository_owner }}/jlc-parts:latest-amd64 -t ghcr.io/${{ github.repository_owner }}/jlc-parts:${{github.ref_name}}-amd64 .
+          docker push ghcr.io/${{ github.repository_owner }}/jlc-parts --all-tags
 
   build-and-publish-arm64:
     runs-on: [self-hosted, ARM64]
@@ -41,5 +41,5 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/jlc-parts:latest-arm64 .
-          docker push ghcr.io/${{ github.repository_owner }}/jlc-parts:latest-arm64
+          docker build --no-cache -t ghcr.io/${{ github.repository_owner }}/jlc-parts:latest-arm64 -t ghcr.io/${{ github.repository_owner }}/jlc-parts:${{github.ref_name}}-arm64 .
+          docker push ghcr.io/${{ github.repository_owner }}/jlc-parts --all-tags
