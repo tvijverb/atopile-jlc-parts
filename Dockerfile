@@ -10,7 +10,7 @@ RUN  apt-get update && apt-get upgrade -y \
     && apt-get install -y mold wget curl p7zip-full g++ \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash
+RUN curl -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash
 RUN cargo binstall jlcpcb-to-parquet -y
 
 
