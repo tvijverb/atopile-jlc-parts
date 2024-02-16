@@ -1,5 +1,7 @@
 name: Publish Docker Image
 
+runs-on: self-hosted
+
 on:
   push:
     tags:
