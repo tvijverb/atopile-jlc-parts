@@ -11,7 +11,7 @@ RUN  apt-get update && apt-get upgrade -y \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN curl -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash
-RUN cargo binstall jlcpcb-to-parquet -y || (echo "cargo binstall failed, fallback on cargo install"; cargo install --git https://github.com/tvijverb/jlc-duckdb-to-parquet; exit 0)
+RUN cargo binstall jlcpcb-to-parquet -y || (echo "cargo binstall failed, fallback on cargo install"; cargo install --git https://github.com/tvijverb/jlcpcb-to-parquet; exit 0)
 
 
 RUN wget https://yaqwsx.github.io/jlcparts/data/cache.zip https://yaqwsx.github.io/jlcparts/data/cache.z01 \
@@ -24,7 +24,7 @@ RUN 7z x cache.zip
 # remove the zip files
 RUN rm cache.zip cache.z01 cache.z02 cache.z03 cache.z04 cache.z05 cache.z06 cache.z07 cache.z08 cache.z09
 
-RUN jlcpcb-to-parquet || /usr/local/cargo/bin/jlc-duckdb-to-parquet; exit 0
+RUN jlcpcb-to-parquet || /usr/local/cargo/bin/jlcpcb-to-parquet; exit 0
 
 # COPY ../Cargo.toml ./Cargo.toml
 # # Build empty app with downloaded dependencies to produce a stable image layer for next build
