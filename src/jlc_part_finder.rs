@@ -30,9 +30,10 @@ struct Component {
 }
 
 
-pub fn find_part(request: JLCPartRequest) -> Result<JLCPartResponse, String> {
+pub fn find_part(polars_df: LazyFrame, request: JLCPartRequest) -> Result<JLCPartResponse, String> {
+    tracing::info!("Searching JLC part: {:?}", request);
     if request.type_field == "resistor".to_string() {
-        let option_resistor_df = find_resistor(request.clone());
+        let option_resistor_df = find_resistor(polars_df, request.clone());
         if option_resistor_df.is_none() {
             return Err("No resistor found".to_string());
         } else {
@@ -40,7 +41,7 @@ pub fn find_part(request: JLCPartRequest) -> Result<JLCPartResponse, String> {
             return Ok(df_to_jlcpb_part_response(request, df, jlc_value));
         }
     } else if request.type_field == "capacitor".to_string() {
-        let option_capacitor_df = find_capacitor(request.clone());
+        let option_capacitor_df = find_capacitor(polars_df, request.clone());
         if option_capacitor_df.is_none() {
             return Err("No capacitor found".to_string());
         } else {
@@ -48,7 +49,7 @@ pub fn find_part(request: JLCPartRequest) -> Result<JLCPartResponse, String> {
             return Ok(df_to_jlcpb_part_response(request, df, jlc_value));
         }
     } else if request.type_field == "inductor".to_string() {
-        let option_inductor_df = find_inductor(request.clone());
+        let option_inductor_df = find_inductor(polars_df, request.clone());
         if option_inductor_df.is_none() {
             return Err("No inductor found".to_string());
         } else {

@@ -14,5 +14,7 @@ tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 utoipa = "4.2.0"
 utoipa-swagger-ui = { version = "6.0.0", features = ["axum"] }
 utoipauto = "0.1.9"
-polars = { version = "0.37.0", features = ["parquet", "lazy", "object", "streaming", "sql"] }
+polars = { version = "0.37.0", features = ["parquet", "lazy", "object", "streaming", "sql", "performant"] }
 uuid = { version = "1.7.0", features = ["v4"] }
+tracing = "0.1.40"
+tower-http = { version = "0.5.1", features = ["trace"] }
