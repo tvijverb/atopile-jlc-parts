@@ -8,6 +8,7 @@ on:
 jobs:
   build-and-publish-amd64:
     runs-on: ubuntu-latest
+    permissions: write-all
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -26,6 +27,7 @@ jobs:
 
   build-and-publish-arm64:
     runs-on: [self-hosted, ARM64]
+    permissions: write-all
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
