@@ -2,8 +2,6 @@ version: "3.9"
 
 services:
   backend:
-    image: atopile-jlcparts
-    build:
-      dockerfile: Dockerfile
+    image: ghcr.io/tvijverb/jlc-parts:latest-arm64
     ports:
      - "3001:3000"
