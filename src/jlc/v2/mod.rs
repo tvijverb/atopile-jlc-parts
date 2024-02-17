@@ -1,7 +1,6 @@
 pub mod endpoints;
-pub mod services;
 pub mod models;
-
+pub mod services;
 
 use axum::routing::post;
 use axum::Router;

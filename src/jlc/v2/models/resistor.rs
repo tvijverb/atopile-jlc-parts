@@ -7,9 +7,9 @@ pub enum ResistorUnit {
     KiloOhm,
     Ohm,
     MiliOhm,
-    MicorOhm,
+    MicroOhm,
     NanoOhm,
-    PicoOhm
+    PicoOhm,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, IntoParams, ToSchema)]
@@ -19,5 +19,5 @@ pub struct ResistorRequest {
     pub package: Option<String>,
     pub tolerance_percentage: Option<f64>,
     pub absolute_tolerance: Option<f64>,
-    pub absolute_tolerance_unit: Option<ResistorUnit>
+    pub absolute_tolerance_unit: Option<ResistorUnit>,
 }

@@ -20,10 +20,16 @@ fn to_bool<'a>(v: &AnyValue<'a>) -> bool {
 pub fn dataframe_to_component(df: DataFrame) -> Component {
     let df_first = df.get_row(0).unwrap();
     Component {
-        lcsc: format!("C{}",df_first.0.get(0).unwrap().to_string().replace("\"", "")),
+        lcsc: format!(
+            "C{}",
+            df_first.0.get(0).unwrap().to_string().replace("\"", "")
+        ),
         mpn: df_first.0.get(2).unwrap().to_string().replace("\"", ""),
         package: df_first.0.get(3).unwrap().to_string().replace("\"", ""),
-        footprint: format!("R{}",df_first.0.get(3).unwrap().to_string().replace("\"", "")),
+        footprint: format!(
+            "R{}",
+            df_first.0.get(3).unwrap().to_string().replace("\"", "")
+        ),
         joints: df_first.0.get(4).unwrap().try_extract().unwrap(),
         manufacturer_id: df_first.0.get(5).unwrap().try_extract().unwrap(),
         basic: to_bool(df_first.0.get(6).unwrap()),

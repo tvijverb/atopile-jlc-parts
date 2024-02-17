@@ -7,13 +7,10 @@ use crate::jlc::v2::models::*;
 
 pub enum Tolerance {
     Up,
-    Down
+    Down,
 }
 
-pub fn find_resistor(
-    resistors_df: LazyFrame,
-    request: ResistorRequest,
-) -> Option<DataFrame> {
+pub fn find_resistor(resistors_df: LazyFrame, request: ResistorRequest) -> Option<DataFrame> {
     // filter resistors_df on category_id = 46
     let mut resistors_df = resistors_df
         .filter(col("category_id").eq(lit(46)))
@@ -23,11 +20,15 @@ pub fn find_resistor(
 
     // value conversion
 
-
     let jlc_ohm_value = get_resistor_value(request.value, request.unit.clone());
     let jlc_ohm_tolerance_up = get_resistor_tolerance(request.clone(), Tolerance::Up);
     let jlc_ohm_tolerance_down = get_resistor_tolerance(request.clone(), Tolerance::Down);
-    tracing::info!("Searching for resistor with value: {} ohm, min: {} ohm, max: {} ohm", jlc_ohm_value, jlc_ohm_tolerance_down, jlc_ohm_tolerance_up);
+    tracing::info!(
+        "Searching for resistor with value: {} ohm, min: {} ohm, max: {} ohm",
+        jlc_ohm_value,
+        jlc_ohm_tolerance_down,
+        jlc_ohm_tolerance_up
+    );
 
     // if request.package is not None, filter resistors_df on package = request.package
     if request.package.is_some() {
@@ -61,10 +62,7 @@ pub fn find_resistor(
     None
 }
 
-pub fn get_resistor_tolerance(
-    request: ResistorRequest,
-    tolerance: Tolerance,
-) -> f64 {
+pub fn get_resistor_tolerance(request: ResistorRequest, tolerance: Tolerance) -> f64 {
     let nominal_value = get_resistor_value(request.value, request.unit);
     // check if absolute_tolerance is set or tolerance_percentage is set
     if request.absolute_tolerance.is_some() {
@@ -92,33 +90,14 @@ pub fn get_resistor_tolerance(
     }
 }
 
-
-pub fn get_resistor_value(
-    request_value: f64,
-    request_unit: ResistorUnit,
-) -> f64 {
+pub fn get_resistor_value(request_value: f64, request_unit: ResistorUnit) -> f64 {
     match request_unit {
-        ResistorUnit::PicoOhm => (
-            return request_value * 1e-12
-        ),
-        ResistorUnit::NanoOhm => (
-            return request_value * 1e-9
-        ),
-        ResistorUnit::MicorOhm => (
-            return request_value * 1e-6
-        ),
-        ResistorUnit::MiliOhm => (
-            return request_value * 1e-3
-        ),
-        ResistorUnit::KiloOhm => (
-            return request_value * 1e3
-        ),
-        ResistorUnit::MegaOhm => (
-            return request_value * 1e6
-        ),
-        ResistorUnit::Ohm => (
-            return request_value
-        ),
+        ResistorUnit::PicoOhm => return request_value * 1e-12,
+        ResistorUnit::NanoOhm => return request_value * 1e-9,
+        ResistorUnit::MicroOhm => return request_value * 1e-6,
+        ResistorUnit::MiliOhm => return request_value * 1e-3,
+        ResistorUnit::KiloOhm => return request_value * 1e3,
+        ResistorUnit::MegaOhm => return request_value * 1e6,
+        ResistorUnit::Ohm => return request_value,
     };
 }
-

@@ -2,7 +2,6 @@ pub mod resistor;
 use serde::{Deserialize, Serialize};
 use utoipa::{IntoParams, ToSchema};
 
-
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, IntoParams, ToSchema)]
 pub struct Component {
     pub lcsc: String,
