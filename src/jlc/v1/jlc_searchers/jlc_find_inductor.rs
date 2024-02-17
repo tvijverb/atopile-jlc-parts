@@ -1,17 +1,22 @@
 use polars::prelude::*;
-use tracing;
 
-use crate::jlc_models::*;
-use crate::jlc_searchers::sort_dataframe;
-
+use super::sort_dataframe;
+use crate::jlc::v1::jlc_models::*;
 
 // inductors use Henry as unit (H)
-pub fn find_inductor(components_df: LazyFrame, request: JLCPartRequest) -> Option<(DataFrame, JLCValue)> {
+pub fn find_inductor(
+    components_df: LazyFrame,
+    request: JLCPartRequest,
+) -> Option<(DataFrame, JLCValue)> {
     // filter components_df on category_id = 12 (inductors)
-    let mut components_df = components_df.filter(col("category_id").eq(lit(12))).collect().unwrap().lazy();
+    let mut components_df = components_df
+        .filter(col("category_id").eq(lit(12)))
+        .collect()
+        .unwrap()
+        .lazy();
 
     // value conversion
-    let (henry_multiplier, henry_string) = match request.value.unit.as_str() {
+    let (henry_multiplier, _henry_string) = match request.value.unit.as_str() {
         "pH" | "picohenry" => (1.0, "pH"),
         "nH" | "nanohenry" => (1e3, "nH"),
         "μH" | "uH" | "microhenry" => (1e6, "μH"),
@@ -41,7 +46,9 @@ pub fn find_inductor(components_df: LazyFrame, request: JLCPartRequest) -> Optio
     }
 
     // filter components_df on inductance = henry_value
-    let components_df_eq = components_df.clone().filter(col("inductance").eq(lit(henry_value)));
+    let components_df_eq = components_df
+        .clone()
+        .filter(col("inductance").eq(lit(henry_value)));
 
     let df_eq = components_df_eq.collect().unwrap();
     if df_eq.height() >= 1 {
@@ -50,7 +57,11 @@ pub fn find_inductor(components_df: LazyFrame, request: JLCPartRequest) -> Optio
     }
 
     // filter components_df on inductance > henry_min and inductance < henry_max
-    let components_df_range = components_df.filter(col("inductance").gt(lit(henry_min)).and(col("inductance").lt(lit(henry_max))));
+    let components_df_range = components_df.filter(
+        col("inductance")
+            .gt(lit(henry_min))
+            .and(col("inductance").lt(lit(henry_max))),
+    );
 
     let df_range = components_df_range.collect().unwrap();
     if df_range.height() >= 1 {

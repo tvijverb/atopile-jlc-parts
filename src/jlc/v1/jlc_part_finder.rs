@@ -1,10 +1,10 @@
 use polars::prelude::*;
 use uuid::Uuid;
 
-use crate::jlc_models::*;
-use crate::jlc_searchers::jlc_find_resistor::find_resistor;
-use crate::jlc_searchers::jlc_find_capacitor::find_capacitor;
-use crate::jlc_searchers::jlc_find_inductor::find_inductor;
+use crate::jlc::v1::jlc_models::*;
+use crate::jlc::v1::jlc_searchers::jlc_find_capacitor::find_capacitor;
+use crate::jlc::v1::jlc_searchers::jlc_find_inductor::find_inductor;
+use crate::jlc::v1::jlc_searchers::jlc_find_resistor::find_resistor;
 
 #[derive(Debug, Clone)]
 struct Component {
@@ -26,9 +26,8 @@ struct Component {
     resistance: Option<i64>,
     inductance: Option<i64>,
     capacitance: Option<i64>,
-    dielectric: Option<String>
+    dielectric: Option<String>,
 }
-
 
 pub fn find_part(polars_df: LazyFrame, request: JLCPartRequest) -> Result<JLCPartResponse, String> {
     tracing::info!("Searching JLC part: {:?}", request);
@@ -61,7 +60,11 @@ pub fn find_part(polars_df: LazyFrame, request: JLCPartRequest) -> Result<JLCPar
     }
 }
 
-pub fn df_to_jlcpb_part_response(request: JLCPartRequest, df: DataFrame, jlc_value: JLCValue) -> JLCPartResponse {
+pub fn df_to_jlcpb_part_response(
+    request: JLCPartRequest,
+    df: DataFrame,
+    jlc_value: JLCValue,
+) -> JLCPartResponse {
     // select first value of every column
     let df_first = df.get_row(0).unwrap();
     let component = Component {
@@ -83,14 +86,21 @@ pub fn df_to_jlcpb_part_response(request: JLCPartRequest, df: DataFrame, jlc_val
         resistance: df_first.0.get(15).unwrap().try_extract().ok(),
         inductance: df_first.0.get(16).unwrap().try_extract().ok(),
         capacitance: df_first.0.get(17).unwrap().try_extract().ok(),
-        dielectric: df_first.0.get(18).unwrap().to_string().replace("\"", "").parse().ok(),
+        dielectric: df_first
+            .0
+            .get(18)
+            .unwrap()
+            .to_string()
+            .replace("\"", "")
+            .parse()
+            .ok(),
     };
     // kicad_footprint is R + package for resistors and C + package for capacitors
     let kicad_footprint = match request.type_field.as_str() {
         "resistor" => format!("R{}", &component.package),
         "capacitor" => format!("C{}", &component.package),
         "inductor" => "L".to_string(),
-        _ => "".to_string()
+        _ => "".to_string(),
     };
     let lcsc_id = format!("C{}", &component.lcsc.replace("\"", ""));
     let best_component = BestComponent {

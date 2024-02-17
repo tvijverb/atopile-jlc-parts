@@ -42,5 +42,9 @@ example request body
 "tolerance": 0.050659999999999705, "tolerance_pct": 3.9999999999999943}}
 ```
 
+```
+{"designator_prefix": "C", "mpn": "generic_capacitor", "type": "capacitor", "value": {"unit": "nanofarad", "min_val": 80.0, "max_val": 120.0, "nominal": 100.0, "tolerance": 
+20.0, "tolerance_pct": 20.0}, "package": "0402"}
+```
 ## Demo endpoint (running on raspberry pi)
 [https://jlcparts.vfive.dev/docs](https://jlcparts.vfive.dev/docs)

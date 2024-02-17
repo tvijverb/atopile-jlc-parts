@@ -1,28 +1,17 @@
-use axum::{
-    routing::{get, post},
-    http::StatusCode,
-    http::Request,
-    http::Response,
-    Json, Router,
-    extract::State
-};
-use std::sync::{Arc, Mutex};
+use axum::{http::Request, http::Response, Router};
+
 use std::time::Duration;
-use serde::{Deserialize, Serialize};
+
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 use utoipauto::utoipauto;
-use utoipa::{IntoParams, ToSchema};
+
 use polars::prelude::*;
-use tracing::{info_span, Span};
 use tower_http::trace::TraceLayer;
-use tracing_subscriber::{fmt, prelude::*, EnvFilter};
+use tracing::{info_span, Span};
+use tracing_subscriber::prelude::*;
 
-pub mod jlc_models;
-pub mod jlc_router;
-pub mod jlc_part_finder;
-pub mod jlc_searchers;
-
+pub mod jlc;
 
 #[utoipauto]
 #[derive(OpenApi)]
@@ -31,13 +20,16 @@ pub struct ApiDoc;
 
 #[derive(Clone)]
 pub struct AppState {
-    polars_df: LazyFrame
+    polars_df: LazyFrame,
+    resistor_df: LazyFrame,
+    capacitor_df: LazyFrame,
+    inductor_df: LazyFrame,
 }
 
 #[tokio::main]
 async fn main() {
     // initialize tracing
-    let filter = "atopile-jlc-parts=debug";
+    let _filter = "atopile-jlc-parts=debug";
 
     // initialize tracing
     tracing_subscriber::registry()
@@ -46,14 +38,22 @@ async fn main() {
         .with(tracing_subscriber::fmt::layer())
         .init();
 
-    let app_state = Arc::new(AppState { polars_df:  LazyFrame::scan_parquet("components.parquet", ScanArgsParquet::default()).unwrap() });
+    let app_state = AppState {
+        polars_df: LazyFrame::scan_parquet("components.parquet", ScanArgsParquet::default())
+            .unwrap(),
+        resistor_df: LazyFrame::scan_parquet("resistors.parquet", ScanArgsParquet::default())
+            .unwrap(),
+        capacitor_df: LazyFrame::scan_parquet("capacitors.parquet", ScanArgsParquet::default())
+            .unwrap(),
+        inductor_df: LazyFrame::scan_parquet("inductors.parquet", ScanArgsParquet::default())
+            .unwrap(),
+    };
 
     // build our application with a route
     let app = Router::new()
         .merge(SwaggerUi::new("/docs").url("/docs/openapi.json", ApiDoc::openapi()))
-        // `GET /` goes to `root`
         .with_state(app_state.clone())
-        .nest("/jlc", jlc_router::router().with_state(app_state))
+        .nest("/jlc", jlc::router().with_state(app_state))
         .layer(
             TraceLayer::new_for_http()
                 .make_span_with(|_request: &Request<_>| info_span!("http_request"))

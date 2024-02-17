@@ -33,6 +33,9 @@ RUN jlcpcb-to-parquet || /usr/local/cargo/bin/jlcpcb-to-parquet; exit 0
 WORKDIR /app
 
 RUN cp /jlcparts/components.parquet /app/components.parquet
+RUN cp /jlcparts/resistors.parquet /app/resistors.parquet
+RUN cp /jlcparts/capacitors.parquet /app/capacitors.parquet
+RUN cp /jlcparts/inductors.parquet /app/inductors.parquet
 
 COPY . .
 COPY Cargo.toml ./Cargo.toml
@@ -41,5 +44,8 @@ RUN cargo build --release
 FROM debian:${VARIANT}-slim
 COPY --from=build /app/target/release/atopile-jlc-parts .
 COPY --from=build /app/components.parquet .
+COPY --from=build /app/resistors.parquet .
+COPY --from=build /app/capacitors.parquet .
+COPY --from=build /app/inductors.parquet .
 EXPOSE 3000
 CMD ["./atopile-jlc-parts"]

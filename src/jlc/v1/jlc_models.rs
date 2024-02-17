@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
 use utoipa::{IntoParams, ToSchema};
 
-
-// Request Models
+// LEGACY Request Models
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, IntoParams, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct JLCPartRequest {
@@ -12,10 +11,10 @@ pub struct JLCPartRequest {
     #[serde(rename = "type")]
     pub type_field: String,
     pub value: JLCValue,
-    pub package: Option<String>
+    pub package: Option<String>,
 }
 
-// Request Models
+// LEGACY Request Models
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, IntoParams, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct JLCValue {
@@ -30,13 +29,14 @@ pub struct JLCValue {
     pub tolerance_pct: f64,
 }
 
-// Response Models
+// LEGACY Response Models
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, IntoParams, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct JLCPartResponse {
     pub best_component: BestComponent,
 }
 
+// LEGACY Response Models
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, IntoParams, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct BestComponent {
@@ -65,6 +65,7 @@ pub struct BestComponent {
     pub basic_part: bool,
 }
 
+// LEGACY Response Models
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, IntoParams, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct Voltage {
@@ -75,12 +76,14 @@ pub struct Voltage {
     pub max_val: i64,
 }
 
+// LEGACY Response Models
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, IntoParams, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct Footprint {
     pub kicad: String,
 }
 
+// LEGACY Response Models
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, IntoParams, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct FootprintData {
