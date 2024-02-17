@@ -1,4 +1,5 @@
 pub mod resistor;
+pub mod capacitor;
 use super::models::Component;
 
 use polars::prelude::*;

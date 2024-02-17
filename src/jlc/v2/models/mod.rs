@@ -1,4 +1,5 @@
 pub mod resistor;
+pub mod capacitor;
 use serde::{Deserialize, Serialize};
 use utoipa::{IntoParams, ToSchema};
 

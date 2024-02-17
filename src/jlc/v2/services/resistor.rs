@@ -10,16 +10,9 @@ pub enum Tolerance {
     Down,
 }
 
-pub fn find_resistor(resistors_df: LazyFrame, request: ResistorRequest) -> Option<DataFrame> {
-    // filter resistors_df on category_id = 46
-    let mut resistors_df = resistors_df
-        .filter(col("category_id").eq(lit(46)))
-        .collect()
-        .unwrap()
-        .lazy();
+pub fn find_resistor(mut resistors_df: LazyFrame, request: ResistorRequest) -> Option<DataFrame> {
 
     // value conversion
-
     let jlc_ohm_value = get_resistor_value(request.value, request.unit.clone());
     let jlc_ohm_tolerance_up = get_resistor_tolerance(request.clone(), Tolerance::Up);
     let jlc_ohm_tolerance_down = get_resistor_tolerance(request.clone(), Tolerance::Down);
@@ -95,7 +88,7 @@ pub fn get_resistor_value(request_value: f64, request_unit: ResistorUnit) -> f64
         ResistorUnit::PicoOhm => return request_value * 1e-12,
         ResistorUnit::NanoOhm => return request_value * 1e-9,
         ResistorUnit::MicroOhm => return request_value * 1e-6,
-        ResistorUnit::MiliOhm => return request_value * 1e-3,
+        ResistorUnit::MilliOhm => return request_value * 1e-3,
         ResistorUnit::KiloOhm => return request_value * 1e3,
         ResistorUnit::MegaOhm => return request_value * 1e6,
         ResistorUnit::Ohm => return request_value,
