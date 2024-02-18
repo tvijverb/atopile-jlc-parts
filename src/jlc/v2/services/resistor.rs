@@ -11,7 +11,6 @@ pub enum Tolerance {
 }
 
 pub fn find_resistor(mut resistors_df: LazyFrame, request: ResistorRequest) -> Option<DataFrame> {
-
     // value conversion
     let jlc_ohm_value = get_resistor_value(request.value, request.unit.clone());
     let jlc_ohm_tolerance_up = get_resistor_tolerance(request.clone(), Tolerance::Up);

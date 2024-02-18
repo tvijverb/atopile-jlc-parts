@@ -6,15 +6,15 @@ use axum::response::Json;
 use axum::response::Response;
 
 use crate::jlc::v2::models::*;
-use crate::jlc::v2::services::capacitor::*;
 use crate::jlc::v2::services::dataframe_to_component;
+use crate::jlc::v2::services::inductor::*;
 use crate::AppState;
 
-use self::capacitor::CapacitorRequest;
+use self::inductor::InductorRequest;
 
-/// JLC Capacitor Part Request
-#[utoipa::path(post, path = "/jlc/v2/capacitor",
-request_body = CapacitorRequest,
+/// JLC Inductor Part Request
+#[utoipa::path(post, path = "/jlc/v2/inductor",
+request_body = InductorRequest,
 responses(
     (status = 200, description = "JLC Part Found", body = [Component]),
     (status = 400, description = "Bad Request", body = [NoPartFound]),
@@ -22,12 +22,10 @@ responses(
 )
 )]
 pub async fn part_request(
-    // this argument tells axum to parse the request body
-    // as JSON into a `CreateUser` type
     State(AppState {
-        ref capacitor_df, ..
+        ref inductor_df, ..
     }): State<AppState>,
-    Json(payload): Json<CapacitorRequest>,
+    Json(payload): Json<InductorRequest>,
 ) -> (StatusCode, Response) {
     // validate the request
     if payload.tolerance_percentage.is_some() && payload.tolerance_percentage < Some(0.0)
@@ -80,14 +78,14 @@ pub async fn part_request(
     }
 
     // all is well, let's find the part
-    let part_dataframe_option = find_capacitor(capacitor_df.clone(), payload);
+    let part_dataframe_option = find_inductor(inductor_df.clone(), payload);
 
     if part_dataframe_option.is_none() {
         return (
             StatusCode::NOT_FOUND,
             Json(NoPartFound {
                 code: 404,
-                message: "No capacitor found".to_string(),
+                message: "No inductor found".to_string(),
             })
             .into_response(),
         );

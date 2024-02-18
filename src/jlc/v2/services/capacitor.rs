@@ -10,16 +10,19 @@ pub enum Tolerance {
     Down,
 }
 
-pub fn find_capacitor(mut capacitors_df: LazyFrame, request: CapacitorRequest) -> Option<DataFrame> {
+pub fn find_capacitor(
+    mut capacitors_df: LazyFrame,
+    request: CapacitorRequest,
+) -> Option<DataFrame> {
     // get the nominal value and tolerance values
     let jlc_farad_value = get_capacitor_value(request.value, request.unit.clone());
     let jlc_farad_tolerance_up = get_capacitor_tolerance(request.clone(), Tolerance::Up);
     let jlc_farad_tolerance_down = get_capacitor_tolerance(request.clone(), Tolerance::Down);
     tracing::info!(
         "Searching for capacitor with value: {} farad, min: {} farad, max: {} farad",
-        jlc_farad_value,
-        jlc_farad_tolerance_down,
-        jlc_farad_tolerance_up
+        jlc_farad_value * 1e-12,
+        jlc_farad_tolerance_down * 1e-12,
+        jlc_farad_tolerance_up * 1e-12
     );
 
     // if request.package is not None, filter capacitors_df on package = request.package
