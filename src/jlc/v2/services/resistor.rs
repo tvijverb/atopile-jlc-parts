@@ -32,7 +32,7 @@ pub fn find_resistor(mut resistors_df: LazyFrame, request: ResistorRequest) -> O
         .clone()
         .filter(col("resistance").eq(lit(jlc_ohm_value)));
 
-    let df_eq = resistors_df_eq.clone().collect().unwrap();
+    let df_eq = resistors_df_eq.collect().unwrap();
     if df_eq.height() >= 1 {
         let df_eq_sorted = sort_dataframe(df_eq);
         return Some(df_eq_sorted);

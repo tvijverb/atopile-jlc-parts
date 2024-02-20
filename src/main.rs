@@ -1,15 +1,13 @@
-use axum::{http::Request, http::Response, Router};
-
 use std::time::Duration;
 
-use utoipa::OpenApi;
-use utoipa_swagger_ui::SwaggerUi;
-use utoipauto::utoipauto;
-
+use axum::{http::Request, http::Response, Router};
 use polars::prelude::*;
 use tower_http::trace::TraceLayer;
 use tracing::{info_span, Span};
 use tracing_subscriber::prelude::*;
+use utoipa::OpenApi;
+use utoipa_swagger_ui::SwaggerUi;
+use utoipauto::utoipauto;
 
 pub mod jlc;
 

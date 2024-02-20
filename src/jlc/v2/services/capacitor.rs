@@ -35,7 +35,7 @@ pub fn find_capacitor(
         .clone()
         .filter(col("capacitance").eq(lit(jlc_farad_value)));
 
-    let df_eq = capacitors_df_eq.clone().collect().unwrap();
+    let df_eq = capacitors_df_eq.collect().unwrap();
     if df_eq.height() >= 1 {
         let df_eq_sorted = sort_dataframe(df_eq);
         return Some(df_eq_sorted);
