@@ -26,7 +26,7 @@ pub struct JLCValue {
     pub nominal: f64,
     pub tolerance: f64,
     #[serde(rename = "tolerance_pct")]
-    pub tolerance_pct: f64,
+    pub tolerance_pct: Option<f64>,
 }
 
 // LEGACY Response Models

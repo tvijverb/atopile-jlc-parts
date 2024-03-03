@@ -6,7 +6,14 @@ Alternative backend to the official Atopile component search-engine.
 ## Tech stack
 Rust, Axum, Pola.rs, Docker
 
+# Launch the APP
+```
+cargo run -- -d postgresql://atopile:<PWD>@192.168.3.22:5430/atopile-jlcpcb
+```
+
+
 ## Install
+   Compiling h2 v0.4.2
 Building the docker image will take +/- 10 minutes depending on your hardware.
 Clone this repository to your local computer and run:
 

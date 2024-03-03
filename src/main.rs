@@ -1,15 +1,28 @@
 use std::time::Duration;
 
-use axum::{http::Request, http::Response, Router};
+use axum::{http::{Request, Response}, Extension, Router};
 use polars::prelude::*;
+use sqlx::postgres::PgPoolOptions;
 use tower_http::trace::TraceLayer;
 use tracing::{info_span, Span};
 use tracing_subscriber::prelude::*;
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 use utoipauto::utoipauto;
+use clap::Parser;
+use dotenv::dotenv;
 
 pub mod jlc;
+
+
+/// Simple program to greet a person
+#[derive(Parser, Debug)]
+#[command(version, about, long_about = None)]
+struct Args {
+    /// DB_URI
+    #[arg(short, long, env)]
+    database_url: String,
+}
 
 #[utoipauto]
 #[derive(OpenApi)]
@@ -26,8 +39,13 @@ pub struct AppState {
 
 #[tokio::main]
 async fn main() {
+    // load .env file
+    dotenv().ok();
+
     // initialize tracing
     let _filter = "atopile-jlc-parts=debug";
+
+    let args = Args::parse();
 
     // initialize tracing
     tracing_subscriber::registry()
@@ -47,11 +65,19 @@ async fn main() {
             .unwrap(),
     };
 
+    // set up connection pool
+    let pool_extension = PgPoolOptions::new()
+        .max_connections(40)
+        .connect(args.database_url.as_str())
+        .await
+        .expect("unable to open db connection");
+
     // build our application with a route
     let app = Router::new()
         .merge(SwaggerUi::new("/docs").url("/docs/openapi.json", ApiDoc::openapi()))
         .with_state(app_state.clone())
         .nest("/jlc", jlc::router().with_state(app_state))
+        .layer(Extension(pool_extension))
         .layer(
             TraceLayer::new_for_http()
                 .make_span_with(|_request: &Request<_>| info_span!("http_request"))

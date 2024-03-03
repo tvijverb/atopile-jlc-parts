@@ -4,6 +4,8 @@ use axum::extract::State;
 use axum::http::StatusCode;
 use axum::response::Json;
 use axum::response::Response;
+use axum::Extension;
+use sqlx::PgPool;
 
 use super::jlc_models::*;
 use super::jlc_part_finder::*;
@@ -18,14 +20,13 @@ responses(
 )
 )]
 pub async fn part_request(
-    // this argument tells axum to parse the request body
-    // as JSON into a `CreateUser` type
+    Extension(pool): Extension<PgPool>,
     State(state): State<AppState>,
     Json(payload): Json<JLCPartRequest>,
 ) -> (StatusCode, Response) {
     // insert your application logic here
 
-    let part_response = find_part(state.polars_df.clone(), payload);
+    let part_response = find_part(pool, payload).await;
 
     if part_response.is_err() {
         return (

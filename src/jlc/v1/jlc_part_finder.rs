@@ -1,4 +1,5 @@
 use polars::prelude::*;
+use sqlx::PgPool;
 use uuid::Uuid;
 
 use crate::jlc::v1::jlc_models::*;
@@ -6,107 +7,91 @@ use crate::jlc::v1::jlc_searchers::jlc_find_capacitor::find_capacitor;
 use crate::jlc::v1::jlc_searchers::jlc_find_inductor::find_inductor;
 use crate::jlc::v1::jlc_searchers::jlc_find_resistor::find_resistor;
 
-#[derive(Debug, Clone)]
-struct Component {
-    lcsc: String,
-    category_id: i64,
-    mfr: String,
-    package: String,
-    joints: i64,
-    manufacturer_id: i64,
-    basic: i64,
-    description: String,
-    datasheet: String,
-    stock: i64,
-    price: String,
-    last_update: i64,
-    flag: i64,
-    last_on_stock: i64,
-    preferred: i64,
-    resistance: Option<i64>,
-    inductance: Option<i64>,
-    capacitance: Option<i64>,
-    dielectric: Option<String>,
+#[derive(Debug, Clone, sqlx::FromRow)]
+pub struct Component {
+    pub id: i64,
+    pub lcsc: String,
+    pub category_id: i64,
+    pub mfr: Option<String>,
+    pub package: Option<String>,
+    pub joints: i64,
+    pub manufacturer: String,
+    pub basic: bool,
+    pub description: Option<String>,
+    pub datasheet: Option<String>,
+    pub stock: i64,
+    pub price: Option<f64>,
+    pub last_update: sqlx::types::time::PrimitiveDateTime,
+    pub resistance: Option<f64>,
+    pub inductance: Option<f64>,
+    pub capacitance: Option<f64>,
+    pub dielectric: Option<String>,
+    pub current: Option<f64>,
+    pub voltage: Option<f64>,
 }
 
-pub fn find_part(polars_df: LazyFrame, request: JLCPartRequest) -> Result<JLCPartResponse, String> {
+pub async fn find_part(pool: PgPool, request: JLCPartRequest) -> Result<JLCPartResponse, String> {
     tracing::info!("Searching JLC part: {:?}", request);
     if request.type_field == "resistor".to_string() {
-        let option_resistor_df = find_resistor(polars_df, request.clone());
-        if option_resistor_df.is_none() {
+        let option_resistor_vec = find_resistor(pool, request.clone()).await;
+        if option_resistor_vec.is_err() {
             return Err("No resistor found".to_string());
         } else {
-            let (df, jlc_value) = option_resistor_df.unwrap();
-            return Ok(df_to_jlcpb_part_response(request, df, jlc_value));
+            let (component_vec, jlc_value) = option_resistor_vec.unwrap();
+            if component_vec.len() == 0 {
+                return Err("No resistor found".to_string());
+            }
+            return Ok(component_vec_to_jlcpb_part_response(request, component_vec, jlc_value));
         }
+
     } else if request.type_field == "capacitor".to_string() {
-        let option_capacitor_df = find_capacitor(polars_df, request.clone());
-        if option_capacitor_df.is_none() {
+        let option_capacitor_vec = find_capacitor(pool, request.clone()).await;
+        if option_capacitor_vec.is_err() {
             return Err("No capacitor found".to_string());
         } else {
-            let (df, jlc_value) = option_capacitor_df.unwrap();
-            return Ok(df_to_jlcpb_part_response(request, df, jlc_value));
+            let (component_vec, jlc_value) = option_capacitor_vec.unwrap();
+            if component_vec.len() == 0 {
+                return Err("No capacitor found".to_string());
+            }
+            return Ok(component_vec_to_jlcpb_part_response(request, component_vec, jlc_value));
         }
     } else if request.type_field == "inductor".to_string() {
-        let option_inductor_df = find_inductor(polars_df, request.clone());
-        if option_inductor_df.is_none() {
+        let option_inductor_vec = find_inductor(pool, request.clone()).await;
+        if option_inductor_vec.is_err() {
             return Err("No inductor found".to_string());
         } else {
-            let (df, jlc_value) = option_inductor_df.unwrap();
-            return Ok(df_to_jlcpb_part_response(request, df, jlc_value));
+            let (component_vec, jlc_value) = option_inductor_vec.unwrap();
+            if component_vec.len() == 0 {
+                return Err("No inductor found".to_string());
+            }
+            return Ok(component_vec_to_jlcpb_part_response(request, component_vec, jlc_value));
         }
-    } else {
+    }
+    else {
         Err("Unsupported part type".to_string())
     }
 }
 
-pub fn df_to_jlcpb_part_response(
+pub fn component_vec_to_jlcpb_part_response(
     request: JLCPartRequest,
-    df: DataFrame,
+    components: Vec<Component>,
     jlc_value: JLCValue,
 ) -> JLCPartResponse {
-    // select first value of every column
-    let df_first = df.get_row(0).unwrap();
-    let component = Component {
-        lcsc: df_first.0.get(0).unwrap().to_string(),
-        category_id: df_first.0.get(1).unwrap().try_extract().unwrap(),
-        mfr: df_first.0.get(2).unwrap().to_string(),
-        package: df_first.0.get(3).unwrap().to_string(),
-        joints: df_first.0.get(4).unwrap().try_extract().unwrap(),
-        manufacturer_id: df_first.0.get(5).unwrap().try_extract().unwrap(),
-        basic: df_first.0.get(6).unwrap().try_extract().unwrap(),
-        description: df_first.0.get(7).unwrap().to_string(),
-        datasheet: df_first.0.get(8).unwrap().to_string(),
-        stock: df_first.0.get(9).unwrap().try_extract().unwrap(),
-        price: df_first.0.get(10).unwrap().to_string(),
-        last_update: df_first.0.get(11).unwrap().try_extract().unwrap(),
-        flag: df_first.0.get(12).unwrap().try_extract().unwrap(),
-        last_on_stock: df_first.0.get(13).unwrap().try_extract().unwrap(),
-        preferred: df_first.0.get(14).unwrap().try_extract().unwrap(),
-        resistance: df_first.0.get(15).unwrap().try_extract().ok(),
-        inductance: df_first.0.get(16).unwrap().try_extract().ok(),
-        capacitance: df_first.0.get(17).unwrap().try_extract().ok(),
-        dielectric: df_first
-            .0
-            .get(18)
-            .unwrap()
-            .to_string()
-            .replace("\"", "")
-            .parse()
-            .ok(),
-    };
+    // return first element of components vector
+    let component = components.get(0).unwrap();
+
     // kicad_footprint is R + package for resistors and C + package for capacitors
     let kicad_footprint = match request.type_field.as_str() {
-        "resistor" => format!("R{}", &component.package),
-        "capacitor" => format!("C{}", &component.package),
+        "resistor" => format!("R{}", &component.package.clone().unwrap_or("".to_string())),
+        "capacitor" => format!("C{}", &component.package.clone().unwrap_or("".to_string())),
         "inductor" => "L".to_string(),
         _ => "".to_string(),
     };
-    let lcsc_id = format!("C{}", &component.lcsc.replace("\"", ""));
+    let lcsc_id = component.lcsc.clone();
     let best_component = BestComponent {
-        dielectric: component.dielectric,
-        basic_part: component.basic == 1,
-        description: component.description.replace("\"", ""),
+        dielectric: component.dielectric.clone(),
+        basic_part: component.basic,
+        description: component.description.clone().unwrap_or("".to_string()),
         type_field: request.type_field,
         uuid: Uuid::new_v4().to_string(),
         value: jlc_value,
@@ -122,11 +107,11 @@ pub fn df_to_jlcpb_part_response(
         footprint: Footprint {
             kicad: kicad_footprint.replace("\"", ""),
         },
-        mpn: component.mfr.replace("\"", ""),
-        datasheet: component.datasheet.replace("\"", ""),
-        category: "".to_string(), // not really needed right now
+        mpn: component.mfr.clone().unwrap_or("".to_string()),
+        datasheet: component.datasheet.clone().unwrap_or("".to_string()),
+        category: "Resistors".to_string(), // not really needed right now
         lcsc_id: lcsc_id,
-        package: component.package.replace("\"", ""),
+        package: component.package.clone().unwrap_or("".to_string()),
         footprint_data: FootprintData {
             kicad: "standard-library".to_string(),
         },
@@ -134,4 +119,5 @@ pub fn df_to_jlcpb_part_response(
     JLCPartResponse {
         best_component: best_component,
     }
+
 }
