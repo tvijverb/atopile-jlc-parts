@@ -6,3 +6,7 @@ services:
     image: ghcr.io/tvijverb/jlc-parts:latest-arm64 # or ghcr.io/tvijverb/jlc-parts:latest-amd64
     ports:
      - "3001:3000"
+    # environment: # use this to set the database url
+    #     - DATABASE_URL=${DATABASE_URL}
+    env_file: # or use a .env file with DATABASE_URL=...
+      - .env
