@@ -1,0 +1,133 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "SELECT id as \"id!\", lcsc as \"lcsc!\", category_id as \"category_id!\", mfr as \"mfr?\", package as \"package?\", joints as \"joints!\", manufacturer as \"manufacturer!\", basic as \"basic!\", description as \"description?\", datasheet as \"datasheet?\", stock as \"stock!\", price as \"price?\", last_update as \"last_update!\", capacitance as \"capacitance?\", inductance, resistance, dielectric as \"dielectric?\", current, voltage FROM parts WHERE category_id = $1 and capacitance between $2 and $3 and package = $4 ORDER BY basic DESC LIMIT 100",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id!",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "lcsc!",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 2,
+        "name": "category_id!",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 3,
+        "name": "mfr?",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 4,
+        "name": "package?",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 5,
+        "name": "joints!",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 6,
+        "name": "manufacturer!",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 7,
+        "name": "basic!",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 8,
+        "name": "description?",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 9,
+        "name": "datasheet?",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 10,
+        "name": "stock!",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 11,
+        "name": "price?",
+        "type_info": "Float8"
+      },
+      {
+        "ordinal": 12,
+        "name": "last_update!",
+        "type_info": "Timestamp"
+      },
+      {
+        "ordinal": 13,
+        "name": "capacitance?",
+        "type_info": "Float8"
+      },
+      {
+        "ordinal": 14,
+        "name": "inductance",
+        "type_info": "Float8"
+      },
+      {
+        "ordinal": 15,
+        "name": "resistance",
+        "type_info": "Float8"
+      },
+      {
+        "ordinal": 16,
+        "name": "dielectric?",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 17,
+        "name": "current",
+        "type_info": "Float8"
+      },
+      {
+        "ordinal": 18,
+        "name": "voltage",
+        "type_info": "Float8"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4",
+        "Float8",
+        "Float8",
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ]
+  },
+  "hash": "9cf7dc345d643d9ae0cd8b15534a4f9369c974ab0072aeb736773d664c36a92f"
+}
