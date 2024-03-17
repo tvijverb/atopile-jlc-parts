@@ -4,43 +4,33 @@
 Alternative backend to the official Atopile component search-engine.
 
 ## Tech stack
-Rust, Axum, Pola.rs, Docker
+Rust, Axum, SQLX, Docker
 
 # Launch the APP
 ```
 cargo run -- -d postgresql://atopile:<PWD>@192.168.3.22:5430/atopile-jlcpcb
 ```
 
-
-## Install
-   Compiling h2 v0.4.2
-Building the docker image will take +/- 10 minutes depending on your hardware.
-Clone this repository to your local computer and run:
-
-```bash
-docker run -p 3001:3000 -d $(docker build -q -f dockerfile.prd .)
+# Development with VSCode Devcontainer
+Development of the Atopile Component Server is done with (VSCode Devcontainers)[https://code.visualstudio.com/docs/devcontainers/containers].
+1. Install the 'Dev Containers' extension in VSCode
+2. Copy .env.example to .env
+3. Press F1, 'Open In Container' 
+4. Connect https://github.com/tvijverb/jlcpcb_scraper to the postgres docker container on port 5431 and scrape JLCPCB
+5. Start Axum
 ```
-
-Or if you prefer docker compose
-```bash
-docker compose up
+cargo watch -x 'run'
 ```
-
-You'll need the JLC parts parquet dataframe in order to serve requests, you can get it from this repository:
-```bash
-https://github.com/tvijverb/jlc-duckdb-to-parquet
-```
-
 
 ## Endpoints
 swagger page
 ```
-0.0.0.0/docs
+localhost:3001/docs
 ```
 
 post request request for parts
 ```
-0.0.0.0/jlc
+localhost:3001/jlc
 ```
 
 example request body
