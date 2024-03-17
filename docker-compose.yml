@@ -3,7 +3,7 @@ version: "3.9"
 services:
   backend:
     restart: always
-    image: ghcr.io/tvijverb/jlc-parts:latest-arm64 # or ghcr.io/tvijverb/jlc-parts:latest-amd64
+    image: ghcr.io/tvijverb/jlc-parts:latest
     ports:
      - "3001:3000"
     # environment: # use this to set the database url
