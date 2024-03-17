@@ -1,0 +1,90 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "SELECT lcsc as \"lcsc!\", category_id as \"category_id!\", mfr as \"mfr?\", package as \"package?\", joints as \"joints!\", manufacturer as \"manufacturer!\", basic as \"basic!\", description as \"description?\", datasheet as \"datasheet?\", stock as \"stock!\", price as \"price?\", dielectric as \"dielectric?\" FROM parts WHERE category_id = $1 and resistance between $2 and $3 ORDER BY basic DESC LIMIT 100",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "lcsc!",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 1,
+        "name": "category_id!",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 2,
+        "name": "mfr?",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 3,
+        "name": "package?",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 4,
+        "name": "joints!",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 5,
+        "name": "manufacturer!",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 6,
+        "name": "basic!",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 7,
+        "name": "description?",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 8,
+        "name": "datasheet?",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 9,
+        "name": "stock!",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 10,
+        "name": "price?",
+        "type_info": "Float8"
+      },
+      {
+        "ordinal": 11,
+        "name": "dielectric?",
+        "type_info": "Varchar"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4",
+        "Float8",
+        "Float8"
+      ]
+    },
+    "nullable": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ]
+  },
+  "hash": "5b0fa3cd101504565f25195c60e754b28fd69155c3f91f9dc7283bf8cb3e598c"
+}

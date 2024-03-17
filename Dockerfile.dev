@@ -1,5 +1,7 @@
 ARG VARIANT="bookworm"
 ARG RUST_LOG="atopile-jlc-parts=info"
+ARG UID
+ARG GID
 
 FROM rust:slim-${VARIANT}
 
@@ -8,11 +10,9 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 
 # Create a non-root user called "user"
 RUN adduser --disabled-password --gecos '' --shell /bin/bash user
-RUN echo user ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/user \
-    && chmod 0440 /etc/sudoers.d/user
+RUN 'user ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
 # Set the working directory and grant permissions to the "user"
-WORKDIR /app
-RUN chown -R user:user /app
+WORKDIR /home/user
 
 # Switch to the "user" and run subsequent commands as "user"
 USER user
