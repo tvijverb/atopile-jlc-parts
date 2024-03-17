@@ -21,7 +21,7 @@ responses(
 )]
 pub async fn part_request(
     Extension(pool): Extension<PgPool>,
-    State(state): State<AppState>,
+    State(_state): State<AppState>,
     Json(payload): Json<JLCPartRequest>,
 ) -> (StatusCode, Response) {
     // insert your application logic here

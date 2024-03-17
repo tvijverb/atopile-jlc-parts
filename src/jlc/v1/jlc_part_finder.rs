@@ -1,4 +1,3 @@
-use polars::prelude::*;
 use sqlx::PgPool;
 use uuid::Uuid;
 

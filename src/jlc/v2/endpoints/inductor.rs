@@ -1,14 +1,15 @@
 use axum::response::IntoResponse;
 
-use axum::extract::State;
+
 use axum::http::StatusCode;
 use axum::response::Json;
 use axum::response::Response;
+use axum::Extension;
+use sqlx::PgPool;
 
 use crate::jlc::v2::models::*;
-use crate::jlc::v2::services::dataframe_to_component;
 use crate::jlc::v2::services::inductor::*;
-use crate::AppState;
+
 
 use self::inductor::InductorRequest;
 
@@ -22,9 +23,7 @@ responses(
 )
 )]
 pub async fn part_request(
-    State(AppState {
-        ref inductor_df, ..
-    }): State<AppState>,
+    Extension(pool): Extension<PgPool>,
     Json(payload): Json<InductorRequest>,
 ) -> (StatusCode, Response) {
     // validate the request
@@ -78,22 +77,32 @@ pub async fn part_request(
     }
 
     // all is well, let's find the part
-    let part_dataframe_option = find_inductor(inductor_df.clone(), payload);
+    let result_vec_component = find_inductor(pool, payload).await;
 
-    if part_dataframe_option.is_none() {
+    if result_vec_component.is_err() {
         return (
             StatusCode::NOT_FOUND,
             Json(NoPartFound {
-                code: 404,
-                message: "No inductor found".to_string(),
+                code: 500,
+                message: format!("Internal Server Error: {}", result_vec_component.unwrap_err()),
             })
             .into_response(),
         );
     }
 
-    let component = dataframe_to_component(part_dataframe_option.unwrap());
-
-    // this will be converted into a JSON response
-    // with a status code of `201 Created`
-    (StatusCode::OK, Json(component).into_response())
+    // unwrap the result and convert it into a JSON response
+    // if the length of the vector is 0, return a 404
+    let vec_component = result_vec_component.unwrap();
+    if vec_component.len() == 0 {
+        return (
+            StatusCode::NOT_FOUND,
+            Json(NoPartFound {
+                code: 404,
+                message: "No part found".to_string(),
+            })
+            .into_response(),
+        );
+    }
+    // return the first element of the vector
+    (StatusCode::OK, Json(vec_component.first().unwrap()).into_response())
 }

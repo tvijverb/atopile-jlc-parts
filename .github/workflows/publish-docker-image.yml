@@ -21,25 +21,34 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push Docker image
-        run: |
-          docker build --no-cache -t ghcr.io/${{ github.repository_owner }}/jlc-parts:latest-amd64 -t ghcr.io/${{ github.repository_owner }}/jlc-parts:${{github.ref_name}}-amd64 .
-          docker push ghcr.io/${{ github.repository_owner }}/jlc-parts --all-tags
-
-  build-and-publish-arm64:
-    runs-on: [self-hosted, ARM64]
-    permissions: write-all
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
+        uses: docker/build-push-action@v5
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/jlc-parts:latest
+            ghcr.io/${{ github.repository_owner }}/jlc-parts:${{ github.ref_name }}
 
-      - name: Build and push Docker image
-        run: |
-          docker build --no-cache -t ghcr.io/${{ github.repository_owner }}/jlc-parts:latest-arm64 -t ghcr.io/${{ github.repository_owner }}/jlc-parts:${{github.ref_name}}-arm64 .
-          docker push ghcr.io/${{ github.repository_owner }}/jlc-parts --all-tags
+  # build-and-publish-arm64:
+  #   runs-on: [self-hosted, ARM64]
+  #   permissions: write-all
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v4
+
+  #     - name: Login to GitHub Container Registry
+  #       uses: docker/login-action@v3
+  #       with:
+  #         registry: ghcr.io
+  #         username: ${{ github.actor }}
+  #         password: ${{ secrets.GITHUB_TOKEN }}
+
+  #     - name: Build and push Docker image
+  #       uses: docker/build-push-action@v2
+  #       with:
+  #         context: .
+  #         push: true
+  #         tags: |
+  #           ghcr.io/${{ github.repository_owner }}/jlc-parts:latest-arm64
+  #           ghcr.io/${{ github.repository_owner }}/jlc-parts:${{ github.ref_name }}-arm64

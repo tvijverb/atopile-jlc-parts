@@ -1,8 +1,6 @@
-use polars::prelude::*;
+use sqlx::PgPool;
 
 use self::capacitor::{CapacitorRequest, CapacitorUnit};
-
-use super::sort_dataframe;
 use crate::jlc::v2::models::*;
 
 pub enum Tolerance {
@@ -10,10 +8,10 @@ pub enum Tolerance {
     Down,
 }
 
-pub fn find_capacitor(
-    mut capacitors_df: LazyFrame,
+pub async fn find_capacitor(
+    pool: PgPool,
     request: CapacitorRequest,
-) -> Option<DataFrame> {
+) -> Result<Vec<Component>, sqlx::Error> {
     // get the nominal value and tolerance values
     let jlc_farad_value = get_capacitor_value(request.value, request.unit.clone());
     let jlc_farad_tolerance_up = get_capacitor_tolerance(request.clone(), Tolerance::Up);
@@ -25,36 +23,30 @@ pub fn find_capacitor(
         jlc_farad_tolerance_up * 1e-12
     );
 
-    // if request.package is not None, filter capacitors_df on package = request.package
+    let capacitor_category_id: (i32,) = sqlx::query_as("SELECT id FROM categories WHERE name = 'Capacitors' and subcategory_name = 'Multilayer Ceramic Capacitors MLCC - SMD/SMT'")
+    .fetch_one(&pool).await?;
+
+    // if request.package is not None, filter components_df on package = request.package
     if request.package.is_some() {
-        capacitors_df = capacitors_df.filter(col("package").eq(lit(request.package.unwrap())));
+        let matching_parts: Vec<Component> = sqlx::query_as!(
+            Component,
+            r#"SELECT lcsc as "lcsc!", category_id as "category_id!", mfr as "mfr?", package as "package?", joints as "joints!", manufacturer as "manufacturer!", basic as "basic!", description as "description?", datasheet as "datasheet?", stock as "stock!", price as "price?", dielectric as "dielectric?" FROM parts WHERE category_id = $1 and capacitance between $2 and $3 and package = $4 ORDER BY basic DESC LIMIT 100"#,
+            capacitor_category_id.0,
+            jlc_farad_tolerance_down,
+            jlc_farad_tolerance_up,
+            request.package.unwrap()
+        ).fetch_all(&pool).await?;
+        return Ok(matching_parts);
+    } else {
+        let matching_parts: Vec<Component> = sqlx::query_as!(
+            Component,
+            r#"SELECT lcsc as "lcsc!", category_id as "category_id!", mfr as "mfr?", package as "package?", joints as "joints!", manufacturer as "manufacturer!", basic as "basic!", description as "description?", datasheet as "datasheet?", stock as "stock!", price as "price?", dielectric as "dielectric?" FROM parts WHERE category_id = $1 and capacitance between $2 and $3 ORDER BY basic DESC LIMIT 100"#,
+            capacitor_category_id.0,
+            jlc_farad_tolerance_down,
+            jlc_farad_tolerance_up
+        ).fetch_all(&pool).await?;
+        return Ok(matching_parts);
     }
-
-    // filter capacitors_df on capacitance = farad_value
-    let capacitors_df_eq = capacitors_df
-        .clone()
-        .filter(col("capacitance").eq(lit(jlc_farad_value)));
-
-    let df_eq = capacitors_df_eq.collect().unwrap();
-    if df_eq.height() >= 1 {
-        let df_eq_sorted = sort_dataframe(df_eq);
-        return Some(df_eq_sorted);
-    }
-
-    // filter capacitors_df on capacitance > farad_min and capacitance < farad_max
-    let capacitors_df_range: LazyFrame = capacitors_df.filter(
-        col("capacitance")
-            .gt(lit(jlc_farad_tolerance_down))
-            .and(col("capacitance").lt(lit(jlc_farad_tolerance_up))),
-    );
-
-    let df_range = capacitors_df_range.collect().unwrap();
-    if df_range.height() >= 1 {
-        let df_range_sorted = sort_dataframe(df_range);
-        return Some(df_range_sorted);
-    }
-
-    None
 }
 
 pub fn get_capacitor_tolerance(request: CapacitorRequest, tolerance: Tolerance) -> f64 {

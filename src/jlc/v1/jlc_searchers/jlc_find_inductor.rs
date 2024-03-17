@@ -63,7 +63,7 @@ pub async fn find_inductor(
 
     // if request.package is not None, filter components_df on package = request.package
     if request.package.is_some() {
-        let mut matching_parts: Vec<Component> = sqlx::query_as!(
+        let matching_parts: Vec<Component> = sqlx::query_as!(
             Component,
             r#"SELECT id as "id!", lcsc as "lcsc!", category_id as "category_id!", mfr as "mfr?", package as "package?", joints as "joints!", manufacturer as "manufacturer!", basic as "basic!", description as "description?", datasheet as "datasheet?", stock as "stock!", price as "price?", last_update as "last_update!", inductance as "inductance?", capacitance, resistance, dielectric as "dielectric?", current, voltage FROM parts WHERE category_id = $1 and inductance between $2 and $3 and package = $4 ORDER BY basic DESC LIMIT 100"#,
             inductor_category_id.0,
@@ -73,7 +73,7 @@ pub async fn find_inductor(
         ).fetch_all(&pool).await?;
         return Ok((matching_parts, jlc_henry_value));
     } else {
-        let mut matching_parts: Vec<Component> = sqlx::query_as!(
+        let matching_parts: Vec<Component> = sqlx::query_as!(
             Component,
             r#"SELECT id as "id!", lcsc as "lcsc!", category_id as "category_id!", mfr as "mfr?", package as "package?", joints as "joints!", manufacturer as "manufacturer!", basic as "basic!", description as "description?", datasheet as "datasheet?", stock as "stock!", price as "price?", last_update as "last_update!", inductance as "inductance?", capacitance, resistance, dielectric as "dielectric?", current, voltage FROM parts WHERE category_id = $1 and inductance between $2 and $3 ORDER BY basic DESC LIMIT 100"#,
             inductor_category_id.0,

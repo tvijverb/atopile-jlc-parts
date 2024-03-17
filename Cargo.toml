@@ -1,6 +1,6 @@
 [package]
 name = "atopile-jlc-parts"
-version = "0.3.1"
+version = "0.4.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -14,7 +14,6 @@ tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 utoipa = "4.2.0"
 utoipa-swagger-ui = { version = "6.0.0", features = ["axum"] }
 utoipauto = "0.1.9"
-polars = { version = "0.37.0", features = ["parquet", "lazy", "object", "streaming", "sql", "performant"] }
 uuid = { version = "1.7.0", features = ["v4"] }
 tracing = "0.1.40"
 tower-http = { version = "0.5.1", features = ["trace"] }
@@ -22,3 +21,6 @@ sqlx = { version = "0.7.3", features = ["runtime-tokio-rustls", "postgres", "mac
 clap = { version = "4.5.1", features = ["derive", "env"] }
 dotenvy = "0.15.7"
 dotenv = { version = "0.15.0", features = ["clap"] }
+
+[profile.dev]
+debug = 0

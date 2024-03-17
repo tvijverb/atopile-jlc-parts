@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  backend:
+    restart: always
+    tty: true
+    build:
+      dockerfile: ./Dockerfile.dev
+    ports:
+     - "3001:3000"
+    # environment: # use this to set the database url
+    #     - DATABASE_URL=${DATABASE_URL}
+    env_file: # or use a .env file with DATABASE_URL=...
+      - .env
+  
+  postgres:
+    image: "postgres:16-alpine"
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5431:5432"
+    volumes:
+      - atopile-postgres-data:/var/lib/postgresql/data
+
+volumes:
+  atopile-postgres-data:

@@ -1,11 +1,10 @@
-use std::time::Duration;
 
-use axum::{http::{Request, Response}, Extension, Router};
-use polars::prelude::*;
+
+use axum::{Extension, Router};
 use sqlx::postgres::PgPoolOptions;
-use tower_http::trace::TraceLayer;
-use tracing::{info_span, Span};
-use tracing_subscriber::prelude::*;
+
+
+use tracing_subscriber::{fmt, prelude::*, EnvFilter};
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 use utoipauto::utoipauto;
@@ -31,10 +30,6 @@ pub struct ApiDoc;
 
 #[derive(Clone)]
 pub struct AppState {
-    polars_df: LazyFrame,
-    resistor_df: LazyFrame,
-    capacitor_df: LazyFrame,
-    inductor_df: LazyFrame,
 }
 
 #[tokio::main]
@@ -43,26 +38,18 @@ async fn main() {
     dotenv().ok();
 
     // initialize tracing
-    let _filter = "atopile-jlc-parts=debug";
+    let _filter = "atopile_jlc_parts=info,sqlx=warn";
 
     let args = Args::parse();
 
     // initialize tracing
     tracing_subscriber::registry()
-        // .with(fmt::layer())
-        // .with(EnvFilter::new(filter))
-        .with(tracing_subscriber::fmt::layer())
+        .with(fmt::layer())
+        // .with(tracing_subscriber::fmt::layer())
+        .with(EnvFilter::new(_filter))
         .init();
 
     let app_state = AppState {
-        polars_df: LazyFrame::scan_parquet("components.parquet", ScanArgsParquet::default())
-            .unwrap(),
-        resistor_df: LazyFrame::scan_parquet("resistors.parquet", ScanArgsParquet::default())
-            .unwrap(),
-        capacitor_df: LazyFrame::scan_parquet("capacitors.parquet", ScanArgsParquet::default())
-            .unwrap(),
-        inductor_df: LazyFrame::scan_parquet("inductors.parquet", ScanArgsParquet::default())
-            .unwrap(),
     };
 
     // set up connection pool
@@ -77,28 +64,30 @@ async fn main() {
         .merge(SwaggerUi::new("/docs").url("/docs/openapi.json", ApiDoc::openapi()))
         .with_state(app_state.clone())
         .nest("/jlc", jlc::router().with_state(app_state))
-        .layer(Extension(pool_extension))
-        .layer(
-            TraceLayer::new_for_http()
-                .make_span_with(|_request: &Request<_>| info_span!("http_request"))
-                .on_request(|_request: &Request<_>, _span: &Span| {
-                    tracing::info!("request received: {}", _request.uri().path());
-                })
-                .on_response(
-                    |_response: &Response<_>, _latency: Duration, _span: &Span| {
-                        let status = _response.status().as_u16();
-                        if status >= 500 {
-                            tracing::error!("response sent: {}", _response.status().as_u16());
-                        } else {
-                            tracing::info!(
-                                "response sent: {}. with latency: {}",
-                                _response.status().as_u16(),
-                                _latency.as_millis()
-                            );
-                        }
-                    },
-                ),
-        );
+        .layer(Extension(pool_extension));
+
+        // // Leave this commented out for now, halving the performance of the server
+        // .layer(
+        //     TraceLayer::new_for_http()
+        //         .make_span_with(|_request: &Request<_>| info_span!("http_request"))
+        //         .on_request(|_request: &Request<_>, _span: &Span| {
+        //             tracing::info!("request received: {}", _request.uri().path());
+        //         })
+        //         .on_response(
+        //             |_response: &Response<_>, _latency: Duration, _span: &Span| {
+        //                 let status = _response.status().as_u16();
+        //                 if status >= 500 {
+        //                     tracing::error!("response sent: {}", _response.status().as_u16());
+        //                 } else {
+        //                     tracing::info!(
+        //                         "response sent: {}. with latency: {}",
+        //                         _response.status().as_u16(),
+        //                         _latency.as_millis()
+        //                     );
+        //                 }
+        //             },
+        //         ),
+        // );
 
     // run our app with hyper, listening globally on port 3000
     tracing::info!("Started Axum server on port 3000");
