@@ -10,7 +10,7 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 
 # Create a non-root user called "user"
 RUN adduser --disabled-password --gecos '' --shell /bin/bash user
-RUN 'user ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+RUN echo user ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/user
 # Set the working directory and grant permissions to the "user"
 WORKDIR /home/user
 
