@@ -6,13 +6,8 @@ Alternative backend to the official Atopile component search-engine.
 ## Tech stack
 Rust, Axum, SQLX, Docker
 
-# Launch the APP
-```
-cargo run -- -d postgresql://atopile:<PWD>@192.168.3.22:5430/atopile-jlcpcb
-```
-
 # Development with VSCode Devcontainer
-Development of the Atopile Component Server is done with (VSCode Devcontainers)[https://code.visualstudio.com/docs/devcontainers/containers].
+Development of the Atopile Component Server is done with VSCode Devcontainers [https://code.visualstudio.com/docs/devcontainers/containers].
 1. Install the 'Dev Containers' extension in VSCode
 2. Copy .env.example to .env
 3. Press F1, 'Open In Container' 
@@ -30,7 +25,7 @@ localhost:3001/docs
 
 post request request for parts
 ```
-localhost:3001/jlc
+localhost:3001/jlc/v1
 ```
 
 example request body
