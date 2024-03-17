@@ -29,6 +29,33 @@ pub struct Component {
     pub voltage: Option<f64>,
 }
 
+impl Ord for Component {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        if self.basic && !other.basic {
+            std::cmp::Ordering::Less
+        } else if !self.basic && other.basic {
+            std::cmp::Ordering::Greater
+        } else {
+            other.stock.cmp(&self.stock)
+        }
+    }
+}
+
+impl PartialOrd for Component {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Eq for Component {
+}
+
+impl PartialEq for Component {
+    fn eq(&self, other: &Self) -> bool {
+        self.id == other.id
+    }
+}
+
 pub async fn find_part(pool: PgPool, request: JLCPartRequest) -> Result<JLCPartResponse, String> {
     tracing::info!("Searching JLC part: {:?}", request);
     if request.type_field == "resistor".to_string() {
@@ -73,10 +100,11 @@ pub async fn find_part(pool: PgPool, request: JLCPartRequest) -> Result<JLCPartR
 
 pub fn component_vec_to_jlcpb_part_response(
     request: JLCPartRequest,
-    components: Vec<Component>,
+    mut components: Vec<Component>,
     jlc_value: JLCValue,
 ) -> JLCPartResponse {
     // return first element of components vector
+    components.sort();
     let component = components.get(0).unwrap();
 
     // kicad_footprint is R + package for resistors and C + package for capacitors
