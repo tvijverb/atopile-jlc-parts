@@ -16,38 +16,38 @@ pub async fn find_inductor(
     let (henry_value, henry_max, henry_min) = match henry_string.as_str() {
         "pH" | "picohenry" => (
             request.value.nominal,
-            request.value.nominal * (1.0 + request.value.tolerance_pct.unwrap_or(0.0) / 100.0),
-            request.value.nominal * (1.0 - request.value.tolerance_pct.unwrap_or(0.0) / 100.0),
+            request.value.max_val,
+            request.value.min_val,
         ),
         "nH" | "nanohenry" => (
             request.value.nominal * 1e3,
-            request.value.nominal * 1e3 * (1.0 + request.value.tolerance_pct.unwrap_or(0.0) / 100.0),
-            request.value.nominal * 1e3 * (1.0 - request.value.tolerance_pct.unwrap_or(0.0) / 100.0),
+            request.value.max_val * 1e3,
+            request.value.min_val * 1e3,
         ),
         "μH" | "uH" | "microhenry" => (
             request.value.nominal * 1e6,
-            request.value.nominal * 1e6 * (1.0 + request.value.tolerance_pct.unwrap_or(0.0) / 100.0),
-            request.value.nominal * 1e6 * (1.0 - request.value.tolerance_pct.unwrap_or(0.0) / 100.0),
+            request.value.max_val * 1e6,
+            request.value.min_val * 1e6,
         ),
         "mH" | "millihenry" => (
             request.value.nominal * 1e9,
-            request.value.nominal * 1e9 * (1.0 + request.value.tolerance_pct.unwrap_or(0.0) / 100.0),
-            request.value.nominal * 1e9 * (1.0 - request.value.tolerance_pct.unwrap_or(0.0) / 100.0),
+            request.value.max_val * 1e9,
+            request.value.min_val * 1e9,
         ),
         "kH" | "kilohenry" => (
             request.value.nominal * 1e15,
-            request.value.nominal * 1e15 * (1.0 + request.value.tolerance_pct.unwrap_or(0.0) / 100.0),
-            request.value.nominal * 1e15 * (1.0 - request.value.tolerance_pct.unwrap_or(0.0) / 100.0),
+            request.value.max_val * 1e15,
+            request.value.min_val * 1e15,
         ),
         "MH" | "megahenry" => (
             request.value.nominal * 1e18,
-            request.value.nominal * 1e18 * (1.0 + request.value.tolerance_pct.unwrap_or(0.0) / 100.0),
-            request.value.nominal * 1e18 * (1.0 - request.value.tolerance_pct.unwrap_or(0.0) / 100.0),
+            request.value.max_val * 1e18,
+            request.value.min_val * 1e18,
         ),
         "H" | "henry" => (
             request.value.nominal * 1e12,
-            request.value.nominal * 1e12 * (1.0 + request.value.tolerance_pct.unwrap_or(0.0) / 100.0),
-            request.value.nominal * 1e12 * (1.0 - request.value.tolerance_pct.unwrap_or(0.0) / 100.0),
+            request.value.max_val * 1e12,
+            request.value.min_val * 1e12,
         ),
         _ => return Err(sqlx::Error::RowNotFound),
     };

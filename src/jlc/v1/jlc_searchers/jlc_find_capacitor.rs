@@ -16,28 +16,28 @@ pub async fn find_capacitor(
     let (farad_value, farad_max, farad_min) = match farad_string.as_str() {
         "pF" | "picofarad" => (
             request.value.nominal,
-            request.value.nominal * (1.0 + request.value.tolerance_pct.unwrap_or(0.0) / 100.0),
-            request.value.nominal * (1.0 - request.value.tolerance_pct.unwrap_or(0.0) / 100.0),
+            request.value.max_val,
+            request.value.min_val,
         ),
         "nF" | "nanofarad" => (
             request.value.nominal * 1e3,
-            request.value.nominal * 1e3 * (1.0 + request.value.tolerance_pct.unwrap_or(0.0) / 100.0),
-            request.value.nominal * 1e3 * (1.0 - request.value.tolerance_pct.unwrap_or(0.0) / 100.0),
+            request.value.max_val * 1e3,
+            request.value.min_val * 1e3,
         ),
         "μF" | "uF" | "microfarad" => (
             request.value.nominal * 1e6,
-            request.value.nominal * 1e6 * (1.0 + request.value.tolerance_pct.unwrap_or(0.0) / 100.0),
-            request.value.nominal * 1e6 * (1.0 - request.value.tolerance_pct.unwrap_or(0.0) / 100.0),
+            request.value.max_val * 1e6,
+            request.value.min_val * 1e6,
         ),
         "mF" | "millifarad" => (
             request.value.nominal * 1e9,
-            request.value.nominal * 1e9 * (1.0 + request.value.tolerance_pct.unwrap_or(0.0) / 100.0),
-            request.value.nominal * 1e9 * (1.0 - request.value.tolerance_pct.unwrap_or(0.0) / 100.0),
+            request.value.max_val * 1e9,
+            request.value.min_val * 1e9,
         ),
         "F" | "farad" => (
             request.value.nominal * 1e12,
-            request.value.nominal * 1e12 * (1.0 + request.value.tolerance_pct.unwrap_or(0.0) / 100.0),
-            request.value.nominal * 1e12 * (1.0 - request.value.tolerance_pct.unwrap_or(0.0) / 100.0),
+            request.value.max_val * 1e12,
+            request.value.min_val * 1e12,
         ),
         _ => return Err(sqlx::Error::RowNotFound),
     };

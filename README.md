@@ -40,7 +40,7 @@ example request body
 ```
 
 ```
-{"designator_prefix": "C", "mpn": "generic_inductor", "type": "inductor", "value": {"unit": "nanohenry", "min_val": 80.0, "max_val": 120.0, "nominal": 9030.0, "tolerance": 
+{"designator_prefix": "C", "mpn": "generic_inductor", "type": "inductor", "value": {"unit": "nanohenry", "min_val": 80.0, "max_val": 120.0, "nominal": 100.0, "tolerance": 
 20.0,"tolerance_pct": 10}}
 ```
 ## Demo endpoint (running on raspberry pi)
