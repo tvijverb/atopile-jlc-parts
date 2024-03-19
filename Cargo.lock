@@ -134,7 +134,7 @@ dependencies = [
 
 [[package]]
 name = "atopile-jlc-parts"
-version = "0.4.4"
+version = "0.4.5"
 dependencies = [
  "axum",
  "clap 4.5.1",
