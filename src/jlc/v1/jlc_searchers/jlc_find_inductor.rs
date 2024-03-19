@@ -57,8 +57,6 @@ pub async fn find_inductor(
         min_val: henry_min,
         max_val: henry_max,
         nominal: henry_value,
-        tolerance: request.value.tolerance,
-        tolerance_pct: Some(request.value.tolerance_pct.unwrap_or(0.0)),
     };
 
     // if request.package is not None, filter components_df on package = request.package

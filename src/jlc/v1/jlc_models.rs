@@ -24,9 +24,6 @@ pub struct JLCValue {
     #[serde(rename = "max_val")]
     pub max_val: f64,
     pub nominal: f64,
-    pub tolerance: f64,
-    #[serde(rename = "tolerance_pct")]
-    pub tolerance_pct: Option<f64>,
 }
 
 // LEGACY Response Models
@@ -49,7 +46,7 @@ pub struct BestComponent {
     pub code: String,
     pub voltage: Voltage,
     #[serde(rename = "price_usd")]
-    pub price_usd: Option<i64>,
+    pub price_usd: Option<f64>,
     pub area: Option<f64>,
     pub footprint: Footprint,
     pub mpn: String,

@@ -64,8 +64,6 @@ pub async fn find_resistor(
         min_val: ohm_min * 1e-12,
         max_val: ohm_max * 1e-12,
         nominal: ohm_value * 1e-12,
-        tolerance: request.value.tolerance,
-        tolerance_pct: Some(request.value.tolerance_pct.unwrap_or(0.0)),
     };
 
     // if request.package is not None, filter components_df on package = request.package

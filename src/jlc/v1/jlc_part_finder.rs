@@ -129,7 +129,7 @@ pub fn component_vec_to_jlcpb_part_response(
             max_val: 0,
             unit: "V".to_string(),
         },
-        price_usd: None,
+        price_usd: component.price,
         area: None,
         footprint: Footprint {
             kicad: kicad_footprint.replace("\"", ""),

@@ -23,6 +23,7 @@ swagger page
 localhost:3001/docs
 ```
 
+## V1 endpoint (current)
 post request request for parts
 ```
 localhost:3001/jlc/v1
@@ -30,18 +31,19 @@ localhost:3001/jlc/v1
 
 example request body
 ```
-{"designator_prefix": "R", "mpn": "generic_resistor", "type": "resistor", "value": {"unit": "megaohm", "min_val": 5.01534, "max_val": 5.1166599999999995, "nominal": 5.066,
-"tolerance": 0.050659999999999705, "tolerance_pct": 3.9999999999999943}}
+{"designator_prefix": "R", "mpn": "generic_resistor", "type": "resistor", "value": {"unit": "megaohm", "min_val": 5.01534, "max_val": 5.1166599999999995, "nominal": 5.0663}}
 ```
 
 ```
-{"designator_prefix": "C", "mpn": "generic_capacitor", "type": "capacitor", "value": {"unit": "nanofarad", "min_val": 80.0, "max_val": 120.0, "nominal": 100.0, "tolerance": 
-20.0, "tolerance_pct": 20.0}, "package": "0402"}
+{"designator_prefix": "C", "mpn": "generic_capacitor", "type": "capacitor", "value": {"unit": "nanofarad", "min_val": 80.0, "max_val": 120.0, "nominal": 100.0}, "package": "0402"}
 ```
 
 ```
-{"designator_prefix": "C", "mpn": "generic_inductor", "type": "inductor", "value": {"unit": "nanohenry", "min_val": 80.0, "max_val": 120.0, "nominal": 100.0, "tolerance": 
-20.0,"tolerance_pct": 10}}
+{"designator_prefix": "C", "mpn": "generic_inductor", "type": "inductor", "value": {"unit": "nanohenry", "min_val": 80.0, "max_val": 120.0, "nominal": 100.0}}
 ```
+
+## V2 endpoint (in development)
+TODO
+
 ## Demo endpoint (running on raspberry pi)
 [https://jlcparts.vfive.dev/docs](https://jlcparts.vfive.dev/docs)

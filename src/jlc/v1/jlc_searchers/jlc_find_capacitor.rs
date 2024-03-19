@@ -47,8 +47,6 @@ pub async fn find_capacitor(
         min_val: farad_min,
         max_val: farad_max,
         nominal: farad_value,
-        tolerance: request.value.tolerance,
-        tolerance_pct: Some(request.value.tolerance_pct.unwrap_or(0.0)),
     };
 
     // if request.package is not None, filter components_df on package = request.package
