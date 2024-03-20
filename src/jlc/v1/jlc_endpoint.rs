@@ -44,17 +44,17 @@ pub async fn part_request(
     (StatusCode::OK, Json(part_response.unwrap()).into_response())
 }
 
+#[cfg(test)]
 mod tests {
-    use crate::Args;
     use super::*;
+    use crate::Args;
 
-    use axum::routing::post;
-    use axum::Router;
     use ::axum_test::TestServer;
     use ::serde_json::json;
+    use axum::routing::post;
+    use axum::Router;
     use clap::Parser;
     use dotenv::dotenv;
-    
 
     #[tokio::test]
     async fn test_part_request() {

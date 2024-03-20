@@ -47,8 +47,7 @@ impl PartialOrd for Component {
     }
 }
 
-impl Eq for Component {
-}
+impl Eq for Component {}
 
 impl PartialEq for Component {
     fn eq(&self, other: &Self) -> bool {
@@ -67,9 +66,12 @@ pub async fn find_part(pool: PgPool, request: JLCPartRequest) -> Result<JLCPartR
             if component_vec.len() == 0 {
                 return Err("No resistor found".to_string());
             }
-            return Ok(component_vec_to_jlcpb_part_response(request, component_vec, jlc_value));
+            return Ok(component_vec_to_jlcpb_part_response(
+                request,
+                component_vec,
+                jlc_value,
+            ));
         }
-
     } else if request.type_field == "capacitor".to_string() {
         let option_capacitor_vec = find_capacitor(pool, request.clone()).await;
         if option_capacitor_vec.is_err() {
@@ -79,7 +81,11 @@ pub async fn find_part(pool: PgPool, request: JLCPartRequest) -> Result<JLCPartR
             if component_vec.len() == 0 {
                 return Err("No capacitor found".to_string());
             }
-            return Ok(component_vec_to_jlcpb_part_response(request, component_vec, jlc_value));
+            return Ok(component_vec_to_jlcpb_part_response(
+                request,
+                component_vec,
+                jlc_value,
+            ));
         }
     } else if request.type_field == "inductor".to_string() {
         let option_inductor_vec = find_inductor(pool, request.clone()).await;
@@ -90,10 +96,13 @@ pub async fn find_part(pool: PgPool, request: JLCPartRequest) -> Result<JLCPartR
             if component_vec.len() == 0 {
                 return Err("No inductor found".to_string());
             }
-            return Ok(component_vec_to_jlcpb_part_response(request, component_vec, jlc_value));
+            return Ok(component_vec_to_jlcpb_part_response(
+                request,
+                component_vec,
+                jlc_value,
+            ));
         }
-    }
-    else {
+    } else {
         Err("Unsupported part type".to_string())
     }
 }
@@ -146,15 +155,14 @@ pub fn component_vec_to_jlcpb_part_response(
     JLCPartResponse {
         best_component: best_component,
     }
-
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use sqlx::postgres::PgPool;
     use clap::Parser;
     use dotenv::dotenv;
+    use sqlx::postgres::PgPool;
 
     use crate::Args;
 
@@ -177,7 +185,7 @@ mod tests {
         };
         let resistor_result = find_resistor(pool, request.clone()).await;
         assert!(resistor_result.is_ok());
-        let (component_vec, jlc_value) = resistor_result.unwrap();
+        let (component_vec, _jlc_value) = resistor_result.unwrap();
         assert!(component_vec.len() > 0);
         assert!(component_vec[0].package == Some("0603".to_string()));
     }
@@ -201,7 +209,7 @@ mod tests {
         };
         let capacitor_result = find_capacitor(pool, request.clone()).await;
         assert!(capacitor_result.is_ok());
-        let (component_vec, jlc_value) = capacitor_result.unwrap();
+        let (component_vec, _jlc_value) = capacitor_result.unwrap();
         assert!(component_vec.len() > 0);
         assert!(component_vec[0].package == Some("0603".to_string()));
     }
@@ -225,7 +233,7 @@ mod tests {
         };
         let inductor_result = find_inductor(pool, request.clone()).await;
         assert!(inductor_result.is_ok());
-        let (component_vec, jlc_value) = inductor_result.unwrap();
+        let (component_vec, _jlc_value) = inductor_result.unwrap();
         assert!(component_vec.len() > 0);
         assert!(component_vec[0].package == Some("0603".to_string()));
     }

@@ -1,6 +1,5 @@
 use axum::response::IntoResponse;
 
-
 use axum::http::StatusCode;
 use axum::response::Json;
 use axum::response::Response;
@@ -9,7 +8,6 @@ use sqlx::PgPool;
 
 use crate::jlc::v2::models::*;
 use crate::jlc::v2::services::resistor::*;
-
 
 use self::resistor::ResistorRequest;
 
@@ -86,7 +84,10 @@ pub async fn part_request(
             StatusCode::NOT_FOUND,
             Json(NoPartFound {
                 code: 500,
-                message: format!("Internal Server Error: {}", result_vec_component.unwrap_err()),
+                message: format!(
+                    "Internal Server Error: {}",
+                    result_vec_component.unwrap_err()
+                ),
             })
             .into_response(),
         );
@@ -106,5 +107,8 @@ pub async fn part_request(
         );
     }
     // return the first element of the vector
-    (StatusCode::OK, Json(vec_component.first().unwrap()).into_response())
+    (
+        StatusCode::OK,
+        Json(vec_component.first().unwrap()).into_response(),
+    )
 }

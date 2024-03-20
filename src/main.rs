@@ -1,18 +1,14 @@
-
-
 use axum::{Extension, Router};
 use sqlx::postgres::PgPoolOptions;
 
-
+use clap::Parser;
+use dotenv::dotenv;
 use tracing_subscriber::{fmt, prelude::*, EnvFilter};
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 use utoipauto::utoipauto;
-use clap::Parser;
-use dotenv::dotenv;
 
 pub mod jlc;
-
 
 /// Simple program to greet a person
 #[derive(Parser, Debug)]
@@ -29,8 +25,7 @@ pub struct Args {
 pub struct ApiDoc;
 
 #[derive(Clone)]
-pub struct AppState {
-}
+pub struct AppState {}
 
 #[tokio::main]
 async fn main() {
@@ -38,7 +33,7 @@ async fn main() {
     dotenv().ok();
 
     // initialize tracing
-    let _filter = "atopile_jlc_parts=info,sqlx=warn";
+    let _filter = "atopile_jlc_parts=info,sqlx=info";
 
     let args = Args::parse();
 
@@ -49,8 +44,7 @@ async fn main() {
         .with(EnvFilter::new(_filter))
         .init();
 
-    let app_state = AppState {
-    };
+    let app_state = AppState {};
 
     // set up connection pool
     let pool_extension = PgPoolOptions::new()
@@ -66,28 +60,28 @@ async fn main() {
         .nest("/jlc", jlc::router().with_state(app_state))
         .layer(Extension(pool_extension));
 
-        // // Leave this commented out for now, halving the performance of the server
-        // .layer(
-        //     TraceLayer::new_for_http()
-        //         .make_span_with(|_request: &Request<_>| info_span!("http_request"))
-        //         .on_request(|_request: &Request<_>, _span: &Span| {
-        //             tracing::info!("request received: {}", _request.uri().path());
-        //         })
-        //         .on_response(
-        //             |_response: &Response<_>, _latency: Duration, _span: &Span| {
-        //                 let status = _response.status().as_u16();
-        //                 if status >= 500 {
-        //                     tracing::error!("response sent: {}", _response.status().as_u16());
-        //                 } else {
-        //                     tracing::info!(
-        //                         "response sent: {}. with latency: {}",
-        //                         _response.status().as_u16(),
-        //                         _latency.as_millis()
-        //                     );
-        //                 }
-        //             },
-        //         ),
-        // );
+    // // Leave this commented out for now, halving the performance of the server
+    // .layer(
+    //     TraceLayer::new_for_http()
+    //         .make_span_with(|_request: &Request<_>| info_span!("http_request"))
+    //         .on_request(|_request: &Request<_>, _span: &Span| {
+    //             tracing::info!("request received: {}", _request.uri().path());
+    //         })
+    //         .on_response(
+    //             |_response: &Response<_>, _latency: Duration, _span: &Span| {
+    //                 let status = _response.status().as_u16();
+    //                 if status >= 500 {
+    //                     tracing::error!("response sent: {}", _response.status().as_u16());
+    //                 } else {
+    //                     tracing::info!(
+    //                         "response sent: {}. with latency: {}",
+    //                         _response.status().as_u16(),
+    //                         _latency.as_millis()
+    //                     );
+    //                 }
+    //             },
+    //         ),
+    // );
 
     // run our app with hyper, listening globally on port 3000
     tracing::info!("Started Axum server on port 3000");
