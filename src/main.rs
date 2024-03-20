@@ -17,7 +17,7 @@ pub mod jlc;
 /// Simple program to greet a person
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
-struct Args {
+pub struct Args {
     /// DB_URI
     #[arg(short, long, env)]
     database_url: String,

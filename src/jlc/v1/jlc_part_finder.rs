@@ -148,3 +148,85 @@ pub fn component_vec_to_jlcpb_part_response(
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use sqlx::postgres::PgPool;
+    use clap::Parser;
+    use dotenv::dotenv;
+
+    use crate::Args;
+
+    #[tokio::test]
+    async fn test_resistor() {
+        dotenv().ok();
+        let args = Args::parse();
+        let pool = PgPool::connect(args.database_url.as_str()).await.unwrap();
+        let request = JLCPartRequest {
+            type_field: "resistor".to_string(),
+            designator_prefix: "R".to_string(),
+            mpn: "generic_resistor".to_string(),
+            value: JLCValue {
+                unit: "megaohm".to_string(),
+                min_val: 4.0,
+                max_val: 5.0,
+                nominal: 4.5,
+            },
+            package: Some("0603".to_string()),
+        };
+        let resistor_result = find_resistor(pool, request.clone()).await;
+        assert!(resistor_result.is_ok());
+        let (component_vec, jlc_value) = resistor_result.unwrap();
+        assert!(component_vec.len() > 0);
+        assert!(component_vec[0].package == Some("0603".to_string()));
+    }
+
+    #[tokio::test]
+    async fn test_capacitor() {
+        dotenv().ok();
+        let args = Args::parse();
+        let pool = PgPool::connect(args.database_url.as_str()).await.unwrap();
+        let request = JLCPartRequest {
+            type_field: "capacitor".to_string(),
+            designator_prefix: "C".to_string(),
+            mpn: "generic_capacitor".to_string(),
+            value: JLCValue {
+                unit: "microfarad".to_string(),
+                min_val: 4.0,
+                max_val: 5.0,
+                nominal: 4.5,
+            },
+            package: Some("0603".to_string()),
+        };
+        let capacitor_result = find_capacitor(pool, request.clone()).await;
+        assert!(capacitor_result.is_ok());
+        let (component_vec, jlc_value) = capacitor_result.unwrap();
+        assert!(component_vec.len() > 0);
+        assert!(component_vec[0].package == Some("0603".to_string()));
+    }
+
+    #[tokio::test]
+    async fn test_inductor() {
+        dotenv().ok();
+        let args = Args::parse();
+        let pool = PgPool::connect(args.database_url.as_str()).await.unwrap();
+        let request = JLCPartRequest {
+            type_field: "inductor".to_string(),
+            designator_prefix: "L".to_string(),
+            mpn: "generic_inductor".to_string(),
+            value: JLCValue {
+                unit: "microhenry".to_string(),
+                min_val: 4.0,
+                max_val: 5.0,
+                nominal: 4.5,
+            },
+            package: Some("0603".to_string()),
+        };
+        let inductor_result = find_inductor(pool, request.clone()).await;
+        assert!(inductor_result.is_ok());
+        let (component_vec, jlc_value) = inductor_result.unwrap();
+        assert!(component_vec.len() > 0);
+        assert!(component_vec[0].package == Some("0603".to_string()));
+    }
+}
