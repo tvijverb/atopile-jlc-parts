@@ -146,7 +146,6 @@ dependencies = [
  "axum-test",
  "clap 4.5.1",
  "dotenv",
- "dotenvy",
  "serde",
  "serde_json",
  "sqlx",
