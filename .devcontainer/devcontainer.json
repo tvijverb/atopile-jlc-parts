@@ -29,7 +29,8 @@
 			// Set *default* container specific settings.json values on container create.
 			"settings": { 
 				"resmon.show.battery": true,
-				"resmon.show.cpufreq": true
+				"resmon.show.cpufreq": true,
+				"extensions.verifySignature": false
 			},
 			
 			// Add the IDs of extensions you want installed when the container is created.
@@ -38,10 +39,16 @@
 				"mutantdino.resourcemonitor",
 				"rust-lang.rust-analyzer",
 				"tamasfe.even-better-toml",
-				"serayuzgur.crates"
+				"barbosshack.crates-io"
 			]
 		}
-	}
+	},
+
+	"mounts": [
+		"source=${localEnv:HOME}/.ssh,target=/home/user/.ssh,type=bind,consistency=cached",
+		// "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached",
+		// "source=${localEnv:HOME}/.ssh,target=/home/thomas/.ssh,type=bind,consistency=cached"
+	]
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},

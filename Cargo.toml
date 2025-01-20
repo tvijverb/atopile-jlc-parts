@@ -6,21 +6,21 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-axum = "0.7.4"
-serde = { version = "1.0.196", features = ["derive"] }
-serde_json = "1.0.113"
-tokio = { version = "1.36.0", features = ["full"] }
-tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
-utoipa = "4.2.0"
-utoipa-swagger-ui = { version = "6.0.0", features = ["axum"] }
-utoipauto = "0.1.9"
-uuid = { version = "1.7.0", features = ["v4"] }
-tracing = "0.1.40"
-tower-http = { version = "0.5.1", features = ["trace"] }
-sqlx = { version = "0.7.3", features = ["runtime-tokio-rustls", "postgres", "macros", "time", "json", "uuid"] }
-clap = { version = "4.5.1", features = ["derive", "env"] }
+axum = "0.8.1"
+serde = { version = "1.0.217", features = ["derive"] }
+serde_json = "1.0.137"
+tokio = { version = "1.43.0", features = ["full"] }
+tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
+utoipa = "5.3.1"
+utoipa-swagger-ui = { version = "9.0.0", features = ["axum"] }
+utoipauto = "0.2.0"
+uuid = { version = "1.12.0", features = ["v4"] }
+tracing = "0.1.41"
+tower-http = { version = "0.6.2", features = ["trace"] }
+sqlx = { version = "0.8.3", features = ["runtime-tokio-rustls", "postgres", "macros", "time", "json", "uuid"] }
+clap = { version = "4.5.27", features = ["derive", "env"] }
 dotenv = { version = "0.15.0", features = ["clap"] }
-axum-test = "14.4.0"
+axum-test = "17.1.0"
 
 [profile.dev]
 debug = 0

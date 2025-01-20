@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   backend:
-    restart: always
+    restart: unless-stopped
     image: ghcr.io/tvijverb/jlc-parts:latest
     ports:
      - "3001:3000"
