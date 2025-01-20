@@ -24,3 +24,6 @@ axum-test = "14.4.0"
 
 [profile.dev]
 debug = 0
+
+[profile.release]
+strip = "debuginfo"
