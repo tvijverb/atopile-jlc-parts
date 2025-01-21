@@ -2,7 +2,7 @@ ARG VARIANT="bookworm"
 
 FROM rust:slim-${VARIANT} as build
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && apt-get -y install --no-install-recommends sudo libpq-dev pkg-config mold
+    && apt-get -y install --no-install-recommends sudo libpq-dev pkg-config mold curl
 
 WORKDIR /app
 
